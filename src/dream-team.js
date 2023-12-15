@@ -17,18 +17,13 @@ function createDreamTeam(members = []) {
   if (!Array.isArray(members)) {
     return false;
   }
-  const _members = members
-    .reduce((acc, member = "") => {
-      const firstLetter = [...acc];
-      if (typeof member !== "string") return;
-      else if (member.trim().length === 0) return false;
+  const _members = [];
+  members.forEach((member) => {
+    if (typeof member !== "string" || member.trim().length === 0) return;
+    _members.push(member.trim().charAt(0).toUpperCase());
+  });
 
-      firstLetter.push(member.trim().charAt(0).toUpperCase());
-      return firstLetter;
-    }, [])
-    .sort()
-    .join("");
-  return _members;
+  return _members.sort().join("");
 }
 
 module.exports = {
