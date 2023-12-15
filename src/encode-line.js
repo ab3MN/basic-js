@@ -11,20 +11,15 @@ const { NotImplementedError } = require("../extensions/index.js");
  *
  */
 function encodeLine(str = "") {
-  const letters = str.split("").reduce((acc, letter) => {
-    const letters = { ...acc };
-    if (letter in letters) {
-      letters[letter] += 1;
-      return letters;
-    }
-    letters[letter] = 1;
-    return letters;
-  }, {});
-
-  return Object.entries(letters)
-    .map((el) => el[1] + el[0])
-    .join("")
-    .replace(1, "");
+  if (str.length === 0) return str;
+  let encode = 1;
+  let encodeLine = "";
+  for (let i = 0; i < str.length; i++) {
+    str[i] === str[i + 1]
+      ? (encode += 1)
+      : ((encodeLine += encode + str[i]), (encode = 1));
+  }
+  return encodeLine.replaceAll(1, "");
 }
 
 module.exports = {
