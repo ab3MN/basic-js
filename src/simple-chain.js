@@ -1,33 +1,42 @@
-const { NotImplementedError } = require("../extensions/index.js");
+const { NotImplementedError } = require('../extensions/index.js');
 
 /**
  * Implement chainMaker object according to task description
  *
  */
 const chainMaker = {
-  chain: "",
+  chain: [],
   getLength() {
     return this.chain.length;
   },
   addLink(value) {
-    const _value = `( ${value.toString()})`;
-    this.getLength() !== 0
-      ? (this.chain += "~~" + _value)
-      : (this.chain += value);
+    this.chain.push(`( ${String(value)} )`);
     return this;
   },
   removeLink(position) {
-    const head = this.chain.slice(0, position - 1);
-    const tail = this.chain.slice(position, this.getLength());
-    this.chain = head + tail;
+    if (
+      !Number.isInteger(position) ||
+      position < 1 ||
+      position > this.getLength()
+    ) {
+      this.resetChain();
+      throw new Error("You can't remove incorrect link!");
+    }
+
+    this.chain.splice(position - 1, 1);
     return this;
   },
   reverseChain() {
-    this.chain.split("").reverse().join("");
+    this.chain.reverse();
     return this;
   },
   finishChain() {
-    return this.chain;
+    const chain = this.chain.join('~~');
+    this.resetChain();
+    return chain;
+  },
+  resetChain() {
+    this.chain = [];
   },
 };
 
