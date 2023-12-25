@@ -18,31 +18,30 @@ function transform(arr) {
     throw new Error("'arr' parameter must be an instance of the Array!");
   }
   const _arr = [];
-  const controls = [
-    '--double-next',
-    '--double-prev',
-    '--discard-prev',
-    '--discard-next',
-  ];
 
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === '--double-next' && arr[i + 1]) {
-      _arr.push(arr[i + 1]);
-    }
-    if (arr[i] === '--double-prev' && arr[i - 1]) {
-      _arr.push(arr[i - 1]);
-    }
-    if (arr[i] === '--discard-prev' && arr[i - 1]) {
-      _arr.pop();
-    }
-    if (!controls.includes(arr[i])) {
-      _arr.push(arr[i]);
+    switch (arr[i]) {
+      case '--discard-next':
+        i++;
+        break;
+      case '--double-next':
+        if (arr[i + 1]) _arr.push(arr[i + 1]);
+        break;
+      case '--double-prev':
+        if (arr[i - 1] && arr[i - 2] !== '--discard-next')
+          _arr.push(arr[i - 1]);
+        break;
+      case '--discard-prev':
+        if (arr[i - 1] && arr[i - 2] !== '--discard-next') _arr.pop(arr[i - 1]);
+        break;
+      default:
+        _arr.push(arr[i]);
+        break;
     }
   }
 
   return _arr;
 }
-
 module.exports = {
   transform,
 };

@@ -81,6 +81,7 @@ class VigenereCipheringMachine {
 
     let result = '';
     let newKey = this.repeatString(message, key);
+
     for (let i = 0; i < message.length; i++) {
       let col = this.getCharIndex(newKey[i]);
       if (col === -1) {
@@ -92,6 +93,7 @@ class VigenereCipheringMachine {
     }
     return this.modification ? result : this.reverseString(result);
   }
+
   getCharIndex(char = '') {
     return this.alphabet.indexOf(char.toUpperCase());
   }
