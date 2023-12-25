@@ -20,9 +20,10 @@ const { NotImplementedError } = require('../extensions/index.js');
  *
  */
 class VigenereCipheringMachine {
-  constructor() {
+  constructor(modification = true) {
     this.alphabet = '';
     this.tabulaRecta = [];
+    this.modification = modification;
   }
   generateTabulaRecta(alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') {
     this.alphabet = alphabet.split('');
@@ -34,37 +35,68 @@ class VigenereCipheringMachine {
   }
 
   repeatString(firstString, secondString) {
-    if (firstString.length > secondString.length) {
-      secondString += secondString;
-      return this.repeatString(firstString, secondString);
+    let _secondString = secondString;
+    while (_secondString.length < firstString.length) {
+      _secondString += secondString;
     }
-    return secondString.slice(0, firstString.length);
+    for (let i = 0; i < firstString.length; i++) {
+      const char = firstString[i].toUpperCase();
+
+      if (!this.alphabet.includes(char)) {
+        const head = _secondString.slice(0, i);
+        const tail = _secondString.slice(i, firstString.length);
+        _secondString = head + char + tail;
+      }
+    }
+
+    return _secondString.slice(0, firstString.length);
   }
 
   encrypt(message, key) {
     if (!message || !key) {
       throw new Error('Incorrect arguments!');
     }
-    let result = '';
-    let newKey = this.repeatString(message, key);
     this.generateTabulaRecta();
 
-    for (let it = 0; it < message.length; it++) {
-      let i = this.alphabet.indexOf(message[it].toUpperCase());
-      let j;
-      if (i === -1) {
-        result += ' ';
+    let result = '';
+    let newKey = this.repeatString(message, key);
+
+    for (let i = 0; i < message.length; i++) {
+      let row = this.getCharIndex(message[i]);
+      let col = this.getCharIndex(newKey[i]);
+
+      if (row === -1) {
+        result += message[i].toUpperCase();
       } else {
-        j = this.alphabet.indexOf(newKey[it].toUpperCase());
-        result += this.tabulaRecta[i][j];
+        result += this.tabulaRecta[row][col];
       }
     }
-    return result;
+    return this.modification ? result : this.reverseString(result);
   }
   decrypt(message, key) {
     if (!message || !key) {
       throw new Error('Incorrect arguments!');
     }
+    this.generateTabulaRecta();
+
+    let result = '';
+    let newKey = this.repeatString(message, key);
+    for (let i = 0; i < message.length; i++) {
+      let col = this.getCharIndex(newKey[i]);
+      if (col === -1) {
+        result += newKey[i];
+      } else {
+        let row = this.tabulaRecta[col].indexOf(message[i]);
+        result += this.alphabet[row];
+      }
+    }
+    return this.modification ? result : this.reverseString(result);
+  }
+  getCharIndex(char = '') {
+    return this.alphabet.indexOf(char.toUpperCase());
+  }
+  reverseString(str) {
+    return str.split('').reverse().join('');
   }
 }
 
