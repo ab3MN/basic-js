@@ -19,7 +19,11 @@ function repeater(str, options) {
   /* ==================== OPTIONS ==================== */
   const repeatTimes = options?.repeatTimes ?? 1;
   const additionRepeatTimes = options?.additionRepeatTimes ?? 1;
-  const addition = options?.addition ?? '';
+
+  let addition = String(options.addition);
+
+  if (options.addition === undefined) addition = '';
+
   const separator = options?.separator ?? '+';
   const additionSeparator = options?.additionSeparator ?? '|';
 
